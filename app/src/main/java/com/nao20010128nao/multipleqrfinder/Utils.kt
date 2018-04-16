@@ -30,10 +30,6 @@ fun Result.toRectangle(): RectF {
     return RectF(l, t, r, b)
 }
 
-typealias VH = RecyclerView.ViewHolder
-
-fun <T : View> VH.findViewById(id: Int): T = itemView.findViewById(id)
-
 class BindingViewHolder<out T : ViewDataBinding>(val binding: T) : RecyclerView.ViewHolder(binding.root)
 typealias NoneItemViewHolder = BindingViewHolder<ItemNoneBinding>
 typealias QRCodeItemViewHolder = BindingViewHolder<ItemQrcodeBinding>
