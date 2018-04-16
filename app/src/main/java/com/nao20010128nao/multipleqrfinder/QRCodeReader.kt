@@ -1,6 +1,7 @@
 package com.nao20010128nao.multipleqrfinder
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import com.google.zxing.BinaryBitmap
@@ -9,15 +10,21 @@ import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.Result
 import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.multi.qrcode.QRCodeMultiReader
+import java.io.InputStream
 
+fun InputStream.readQrCodes(): List<Result> = use {
+    BitmapFactory.decodeStream(it).res {
+        readQrCodes()
+    }
+}
 
 fun Bitmap.readQrCodes(): List<Result> {
     val bitmap = BinaryBitmap(HybridBinarizer(toLuminanceSource()))
     val reader = QRCodeMultiReader()
-    try {
-        return reader.decodeMultiple(bitmap).asList()
+    return try {
+        reader.decodeMultiple(bitmap).asList()
     } catch (e: Exception) {
-        throw QrNotFoundException(e)
+        emptyList()
     }
 }
 
@@ -36,5 +43,3 @@ fun Bitmap.forceConfig(config: Bitmap.Config): Bitmap {
     canvas.drawBitmap(this, 0f, 0f, Paint())
     return bmp
 }
-
-class QrNotFoundException(e: Throwable) : Throwable("", e)

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MultipleQRFinder</string>
+    <string name="open">OPEN</string>
+    <string name="no_items">No Items</string>
 </resources>

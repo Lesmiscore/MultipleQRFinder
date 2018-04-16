@@ -1,8 +1,14 @@
 package com.nao20010128nao.multipleqrfinder
 
+import android.databinding.ViewDataBinding
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.RectF
+import android.support.v7.widget.RecyclerView
+import android.view.View
 import com.google.zxing.Result
+import com.nao20010128nao.multipleqrfinder.databinding.ItemNoneBinding
+import com.nao20010128nao.multipleqrfinder.databinding.ItemQrcodeBinding
 
 
 inline fun <T> Bitmap.res(aa: Bitmap.(Bitmap) -> T): T {
@@ -23,3 +29,20 @@ fun Result.toRectangle(): RectF {
     val b = y.max()!!
     return RectF(l, t, r, b)
 }
+
+typealias VH = RecyclerView.ViewHolder
+
+fun <T : View> VH.findViewById(id: Int): T = itemView.findViewById(id)
+
+class BindingViewHolder<out T : ViewDataBinding>(val binding: T) : RecyclerView.ViewHolder(binding.root)
+typealias NoneItemViewHolder = BindingViewHolder<ItemNoneBinding>
+typealias QRCodeItemViewHolder = BindingViewHolder<ItemQrcodeBinding>
+typealias NullBindingViewHolder = BindingViewHolder<*>
+
+fun Bitmap.crop(rectF: RectF): Bitmap = Bitmap.createBitmap(
+        this,
+        rectF.left.toInt(),
+        rectF.top.toInt(),
+        (rectF.right - rectF.left).toInt(),
+        (rectF.bottom - rectF.top).toInt()
+)
