@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             }
             (holder?.binding as? ItemQrcodeBinding)?.also {
                 val image = list[position]
-                val rect = image.toRectangle()
+                val rect = image.toRectangle().expand(1.2)
                 it.result = image
                 it.cropped = context.binding.source?.crop(rect)
             }

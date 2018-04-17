@@ -35,6 +35,12 @@ typealias NoneItemViewHolder = BindingViewHolder<ItemNoneBinding>
 typealias QRCodeItemViewHolder = BindingViewHolder<ItemQrcodeBinding>
 typealias NullBindingViewHolder = BindingViewHolder<*>
 
+fun RectF.expand(factor: Double): RectF {
+    val w = ((right - left) * (factor - 1)).toFloat()
+    val h = ((bottom - top) * (factor - 1)).toFloat()
+    return RectF(left + w, top + h, right + w, bottom + h)
+}
+
 fun Bitmap.crop(rectF: RectF): Bitmap = Bitmap.createBitmap(
         this,
         rectF.left.toInt(),
