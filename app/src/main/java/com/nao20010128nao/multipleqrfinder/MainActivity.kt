@@ -1,9 +1,12 @@
 package com.nao20010128nao.multipleqrfinder
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -15,6 +18,7 @@ import com.nao20010128nao.multipleqrfinder.databinding.ItemNoneBinding
 import com.nao20010128nao.multipleqrfinder.databinding.ItemQrcodeBinding
 import kotlin.properties.Delegates
 
+@SuppressLint("StaticFieldLeak")
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
 
@@ -38,11 +42,19 @@ class MainActivity : AppCompatActivity() {
         if (resultCode != Activity.RESULT_OK) return
         when (requestCode) {
             1 -> {
-                val uri = data!!.data
-                val bmp = contentResolver.openInputStream(uri).use { BitmapFactory.decodeStream(it) }
-                binding.source = bmp
-                val result = bmp.readQrCodes()
-                (binding.list.adapter as? Adapter)?.list = result
+                object : AsyncTask<Void, Void, Pair<Bitmap, List<Result>>>() {
+                    override fun doInBackground(vararg params: Void?): Pair<Bitmap, List<Result>> {
+                        val uri = data!!.data
+                        val bmp = contentResolver.openInputStream(uri).use { BitmapFactory.decodeStream(it) }
+                        val invertedResult = bmp.invertedBitmap().res { readQrCodes() }
+                        return bmp to (bmp.readQrCodes() + invertedResult).distinctBy { it.text }
+                    }
+
+                    override fun onPostExecute(result: Pair<Bitmap, List<Result>>?) {
+                        binding.source = result?.first
+                        (binding.list.adapter as? Adapter)?.list = result?.second ?: emptyList()
+                    }
+                }.execute()
             }
         }
     }

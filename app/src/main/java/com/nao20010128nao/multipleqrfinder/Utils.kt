@@ -1,11 +1,8 @@
 package com.nao20010128nao.multipleqrfinder
 
 import android.databinding.ViewDataBinding
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.RectF
+import android.graphics.*
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import com.google.zxing.Result
 import com.nao20010128nao.multipleqrfinder.databinding.ItemNoneBinding
 import com.nao20010128nao.multipleqrfinder.databinding.ItemQrcodeBinding
@@ -48,3 +45,13 @@ fun Bitmap.crop(rectF: RectF): Bitmap = Bitmap.createBitmap(
         (rectF.right - rectF.left).toInt(),
         (rectF.bottom - rectF.top).toInt()
 )
+
+fun Bitmap.invertedBitmap(): Bitmap {
+    val invert = ColorMatrix(floatArrayOf(-1f, 0f, 0f, 0f, 255f, 0f, -1f, 0f, 0f, 255f, 0f, 0f, -1f, 0f, 255f, 0f, 0f, 0f, 1f, 0f))
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val paint = Paint()
+    paint.colorFilter = ColorMatrixColorFilter(invert)
+    canvas.drawBitmap(this, 0f, 0f, paint)
+    return bitmap
+}
